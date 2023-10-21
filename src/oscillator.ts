@@ -1,63 +1,66 @@
 export interface OscillatorOptions {
   frequency: number;
   waveForm: OscillatorType;
-  startTime: number;
+  delay: number;
 }
 
 export class Oscillator {
-  oscillator: OscillatorNode;
-  context: AudioContext;
-  connection: AudioNode;
+  private _oscillator: OscillatorNode;
+  private _context: AudioContext;
+  private _connection: AudioNode;
+  private _frequency: number;
+  private _waveForm: OscillatorType;
+  private _delay: number;
 
-  constructor(context: AudioContext, connection: AudioNode, oscillatorOptions: OscillatorOptions) {
-    this.frequency = oscillatorOptions.frequency;
-    this.waveForm = oscillatorOptions.waveForm;
-    this.startTime = oscillatorOptions.startTime;
-    this.context = context;
-    this.connection = connection;
-    this.oscillator = this.#createOscillator();
+  constructor(context: AudioContext, connection: AudioNode, { frequency = 440, waveForm = 'sine', delay = 0 }: OscillatorOptions) {
+    this._frequency = frequency;
+    this._waveForm = waveForm;
+    this._delay = delay;
+    this._context = context;
+    this._connection = connection;
+    this._oscillator = this.#createOscillator();
   }
 
   get frequency(): number {
-    return this.frequency;
-  }
-
-  get waveForm(): OscillatorType {
-    return this.waveForm;
-  }
-
-  get delay(): number {
-    return this.startTime;
+    return this._frequency;
   }
 
   set frequency(frequency: number) {
-    this.frequency = frequency;
-    this.oscillator.frequency.value = frequency;
+    this._frequency = frequency;
+    this._oscillator.frequency.value = frequency;
+  }
+
+  get waveForm(): OscillatorType {
+    return this._waveForm;
   }
 
   set waveForm(waveForm: OscillatorType) {
-    this.waveForm = waveForm;
-    this.oscillator.type = waveForm;
+    this._waveForm = waveForm;
+    this._oscillator.type = waveForm;
   }
 
-  set startTime(startTime: number) {
-    this.startTime = startTime;
+  get delay(): number {
+    return this._delay;
+  }
+
+  set delay(delay: number) {
+    this._delay = delay;
   }
 
   play(delay = 0): void {
-    this.oscillator = this.#createOscillator()
-    this.oscillator.connect(this.connection);
-    this.oscillator.start(delay);
+    this._oscillator = this.#createOscillator()
+    this._oscillator.connect(this._connection);
+    this._oscillator.start(delay);
   }
   
   stop(): void {
-    this.oscillator.stop(0);
-    this.oscillator.disconnect();
+    this._oscillator.stop(0);
+    this._oscillator.disconnect();
   }
 
   #createOscillator = (): OscillatorNode => {
-    const oscillator = this.context.createOscillator();
-    oscillator.frequency.setValueAtTime(this.frequency, this.startTime);
+    const oscillator = this._context.createOscillator();
+    oscillator.frequency.setValueAtTime(this.frequency, this.delay);
     oscillator.type = this.waveForm;
     return oscillator;
   }
