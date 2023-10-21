@@ -1,0 +1,24 @@
+{
+  "name": "mod.synth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc -w",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/petterskogh/mod.synth.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/petterskogh/mod.synth/issues"
+  },
+  "homepage": "https://github.com/petterskogh/mod.synth#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
