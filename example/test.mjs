@@ -1,66 +1,38 @@
 import { createContext, createVolumeControl } from '../dist/index.js';
-import { getFrequency, keys } from '../dist/frequency-utils.js';
+import { getFrequency, notes } from '../dist/frequency-utils.js';
 import { Oscillator } from '../dist/oscillator.js';
+import { createKey } from '../dist/keys.js';
 
 const context = createContext();
 const volumeControl = createVolumeControl(context);
-
 volumeControl.connect(context.destination);
 
-const keyOscillators = keys.map(key => 
-  new Oscillator(context, volumeControl, { frequency: getFrequency(key, 4), waveForm: 'triangle' })
+const keyOscillators = notes.map(note => 
+  new Oscillator(context, volumeControl, { frequency: getFrequency(note, 3), waveForm: 'triangle' })
 );
 
 const keyboard = document.querySelector('.keyboard');
 
 const keyboardMappings = {
-  [keys[0]]: 'z',
-  [keys[1]]: 's',
-  [keys[2]]: 'x',
-  [keys[3]]: 'd',
-  [keys[4]]: 'c',
-  [keys[5]]: 'v',
-  [keys[6]]: 'g',
-  [keys[7]]: 'b',
-  [keys[8]]: 'h',
-  [keys[9]]: 'n',
-  [keys[10]]: 'j',
-  [keys[11]]: 'm',
+  [notes[0]]: 'z',
+  [notes[1]]: 's',
+  [notes[2]]: 'x',
+  [notes[3]]: 'd',
+  [notes[4]]: 'c',
+  [notes[5]]: 'v',
+  [notes[6]]: 'g',
+  [notes[7]]: 'b',
+  [notes[8]]: 'h',
+  [notes[9]]: 'n',
+  [notes[10]]: 'j',
+  [notes[11]]: 'm',
 };
 
-const keyStates = {};
-
-keys.forEach((key, i) => {
-  const keyElement = document.createElement('input');
-  keyElement.type = 'checkbox';
+notes.forEach((note, i) => {
+  const keyElement = createKey(keyOscillators[i], [keyboardMappings[note]]);
 
   const labelElement = document.createElement('label');
-  labelElement.textContent = key;
-
-  keyElement.addEventListener('change', () => {
-    if (keyElement.checked) {
-      keyOscillators[i].play();
-    } else {
-      keyOscillators[i].stop();
-    }
-  });
-
-  if(keyboardMappings[key]) {
-    window.addEventListener('keydown', (event) => {
-      if (event.key === keyboardMappings[key] && !keyStates[key]) {
-        keyStates[key] = true;
-        keyElement.checked = true;
-        keyElement.dispatchEvent(new Event('change'));
-      }
-    });
-    window.addEventListener('keyup', (event) => {
-      if (event.key === keyboardMappings[key]) {
-        keyStates[key] = false;
-        keyElement.checked = false;
-        keyElement.dispatchEvent(new Event('change'));
-      }
-    });
-  }
+  labelElement.textContent = note;
 
   keyboard.appendChild(keyElement);
   keyboard.appendChild(labelElement);
